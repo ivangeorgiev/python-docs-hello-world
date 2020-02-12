@@ -4,7 +4,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def hello():
-    return "Hello World!<br>" + jsonify(request.headers)
+    return "Hello World!<br><pre>" + jsonify(dict(request.headers)) + "</pre>
 
 
 @app.route("/print")
