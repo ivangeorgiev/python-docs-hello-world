@@ -1,6 +1,7 @@
 from flask import Flask
 from flask import request, jsonify
 import requests
+import os
 
 app = Flask(__name__)
 
@@ -19,7 +20,11 @@ def show_me():
   
   principal_id = request.headers['X-Ms-Client-Principal-Id']
   access_token = request.headers['X-Ms-Token-Aad-Access-Token']
+  tenant_id = os.environ['IG_TENANT_ID']
 
+  params = {
+    'api-version': '1.6'
+  }
   headers = {
     'Authorization': 'Bearer {}'.format(access_token),
     'User-Agent': 'adal-python-sample',
@@ -27,7 +32,8 @@ def show_me():
     'Content-Type': 'application/json'
   }
   response = requests.get(
-      "https://graph.microsoft.com/v1.0/users/{}".format(principal_id),
+      "https://graph.windows.net/{}/users/{}".format(tenant_id, principal_id),
+      params=params,
       headers = headers
     )
   json_response = response.json()
