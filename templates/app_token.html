@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+{% block content %}
+  <p>Graph API Query Response:</p>
+  <textarea cols="80" rows="20">
+    {{ dict(graph_query_response.json()) | tojson(indent=3) }}
+  </textarea>
+
+  <h3>Request MS Graph API Token</h3>
+  <p>Status code: {{ token_response.status_code }}</p>
+  <p>Response Headers:</p>
+  <textarea cols="80" rows="20">
+    {{ dict(token_response.headers) | tojson(indent=3) }}
+  </textarea>
+  <p>Response JSON:</p>
+  <textarea cols="80" rows="20">
+    {{ dict(token_response.json()) | tojson(indent=3) }}
+  </textarea>
+  <p>Access Token:</p>
+  <textarea cols="80" rows="20">{{ access_token }}</textarea>
+
+{% endblock %}
