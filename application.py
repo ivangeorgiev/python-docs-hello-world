@@ -12,13 +12,15 @@ def get_access_token(scope='https://graph.microsoft.com/.default'):
   client_secret = os.environ.get("IG_CLIENT_SECRET")
 
   token_endpoint = "https://login.microsoftonline.com/{}/oauth2/v2.0/token".format(tenant_id)
-  response = requests.post(token_endpoint, 
-      data=dict(
+  data = dict(
         client_id=client_id,
         scope=scope,
         client_secret=client_secret,
         grant_type='client_credentials'
-      ),
+      )
+  print("DATA: {}".format(data))
+  response = requests.post(token_endpoint, 
+      data=data,
       headers={
         'Content-Type': 'application/x-www-form-urlencoded'
       })
