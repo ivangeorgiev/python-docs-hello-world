@@ -32,20 +32,15 @@ class MyShell(Cmd):
   access_token = None
   initialized = False
   api_url = "https://graph.microsoft.com"
-  api_version = "v1.0"
+  api_version = "/v1.0"
   last_response = None
 
-  @property
-  def client_id(self):
-    return os.environ.get("IG_CLIENT_ID")
 
-  @property
-  def tenant_id(self):
-    return os.environ.get("IG_TENANT_ID")
-
-  @property
-  def client_secret(self):
-    return os.environ.get("IG_CLIENT_SECRET")
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
+    self.client_id = os.environ.get("IG_CLIENT_ID")
+    self.tenant_id = os.environ.get("IG_TENANT_ID")
+    self.client_secret = os.environ.get("IG_CLIENT_SECRET")
 
   def do_exit(self, inp):
     """Exit shell"""
@@ -67,12 +62,39 @@ class MyShell(Cmd):
     """Get a property.
 
     Syntax:
-      get {client_id | tenant_id | client_secret | access_token}
+      get {client_id | tenant_id | client_secret | access_token | api_url | api_version }
     """
     try:
+      attr = inp
+      valid_attributes = "client_id,tenant_id,client_secret,api_url,api_version"
+      if not attr in valid_attributes.split(","):
+        raise KeyError(f"'{attr}' not in '{valid_attributes}'")
       print(getattr(self, inp))
     except Exception as ex:
       print("ERROR: {}".format(ex))
+
+  def do_set(self, inp):
+    """Set a property.
+    
+    Syntax:
+      set <property_name> <value>
+
+    <property_name> could be:
+      - client_id
+      - tenant_id
+      - client_secret
+      - api_url
+      - api_version
+    """
+    try:
+      (attr, value) = inp.split(" ", 2)
+      valid_attributes = "client_id,tenant_id,client_secret,api_url,api_version"
+      if not attr in valid_attributes.split(","):
+        raise(KeyError(f"{attr} attribute not in '{valid_attributes}'"))
+      setattr(self, attr, value)
+    except Exception as ex:
+      print(f"ERROR: {ex}")
+
 
   def _graph_query(self, endpoint, endpoint_vars={}):
     if not self.initialized:
@@ -83,7 +105,7 @@ class MyShell(Cmd):
       "Accept": "application/json",
       "Content-Type": "application/json"
     }
-    endpoint_url = "{}/{}{}".format(self.api_url, self.api_version,
+    endpoint_url = "{}{}{}".format(self.api_url, self.api_version,
               endpoint.format(**endpoint_vars))
     return requests.get(endpoint_url, headers=headers)
 
