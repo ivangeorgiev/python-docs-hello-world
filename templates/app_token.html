@@ -2,7 +2,9 @@
 {% block content %}
   <p>Graph API Query Response:</p>
   <textarea cols="80" rows="20">
+    {% if false %}
     {{ dict(graph_query_response.json()) | tojson(indent=3) }}
+    {% endif %}
   </textarea>
 
   <h3>Request MS Graph API Token</h3>
