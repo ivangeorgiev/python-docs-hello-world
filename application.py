@@ -74,8 +74,13 @@ def show_headers():
 @app.route("/apptoken")
 def app_token():
   token_response = get_access_token()
-  access_token = token_response.json()['access_token']
-  graph_query_response = query_graph_users(access_token)
+  
+  if token_response.status_code < 400:
+    access_token = token_response.json().get('access_token', 'UNKNOWN')
+    graph_query_response = query_graph_users(access_token)
+  else:
+    access_token = "ERROR"
+    graph_query_response = "ERROR getting token"
 
   vars = dict(
     token_response=token_response,
