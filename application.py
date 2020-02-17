@@ -70,6 +70,13 @@ def show_headers():
   )
   return render_template('headers.html', **vars) # jsonify(dict(request.headers))
 
+@app.route("/environ")
+def show_env():
+  vars = dict(
+    headers=dict(os.environ)
+  )
+  return render_template('headers.html', **vars) # jsonify(dict(request.headers))
+
 
 @app.route("/apptoken")
 def app_token():
@@ -77,7 +84,13 @@ def app_token():
   
   if token_response.status_code < 400:
     access_token = token_response.json().get('access_token', 'UNKNOWN')
-    graph_query_response = query_graph_users(access_token)
+    response = query_graph_users(access_token)
+    try:
+      graph_query_response = dict(response.json())
+    except Exception as ex:
+      graph_query_response = dict(
+        error = ex
+      )
   else:
     access_token = "ERROR"
     graph_query_response = "ERROR getting token"
